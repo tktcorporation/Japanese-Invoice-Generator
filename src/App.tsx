@@ -6,6 +6,7 @@ import { InvoiceData } from './types';
 
 function App() {
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+  const currentData = invoiceData || InvoiceForm.getInitialData();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,25 +18,29 @@ function App() {
           
           <div className="hidden xl:block xl:w-[800px] sticky top-8 self-start">
             <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-xl font-bold mb-6">プレビュー</h2>
-              <div className="border rounded-lg">
-                <InvoicePDF.Preview data={invoiceData || InvoiceForm.getInitialData()} />
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold">プレビュー</h2>
+                <PDFDownloadLink
+                  document={<InvoicePDF data={currentData} />}
+                  fileName={`invoice-${currentData.invoiceNumber}.pdf`}
+                >
+                  {/* @ts-ignore */}
+                  {({ loading }) => (
+                    <button
+                      disabled={loading}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                    >
+                      {loading ? '準備中...' : 'PDFをダウンロード'}
+                    </button>
+                  )}
+                </PDFDownloadLink>
+              </div>
+              <div className="border rounded-lg overflow-hidden">
+                <InvoicePDF.Preview data={currentData} />
               </div>
             </div>
           </div>
         </div>
-
-        {invoiceData && (
-          <div className="fixed bottom-8 right-8">
-            <PDFDownloadLink
-              document={<InvoicePDF data={invoiceData} />}
-              fileName={`invoice-${invoiceData.invoiceNumber}.pdf`}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {({ loading }) => (loading ? '準備中...' : 'PDFをダウンロード')}
-            </PDFDownloadLink>
-          </div>
-        )}
       </div>
     </div>
   );

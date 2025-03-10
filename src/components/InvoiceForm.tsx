@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { FileText, Plus, Trash2, Eye } from 'lucide-react';
 import { InvoiceData, InvoiceItem } from '../types';
 import { calculateSubtotal, calculateTotals } from '../utils/calculations';
 import { InvoicePreview } from './InvoicePreview';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
+import { Separator } from './ui/separator';
 
 const initialItem: InvoiceItem = {
   description: '',
@@ -31,10 +35,9 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(initialInvoiceData);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
     onSubmit(invoiceData);
-  };
+  }, [invoiceData, onSubmit]);
 
   const addItem = () => {
     setInvoiceData(prev => ({
@@ -75,7 +78,7 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-lg shadow-lg p-6">
+      <div className="space-y-8 bg-white rounded-lg shadow-lg p-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <FileText className="w-6 h-6" />
@@ -84,147 +87,154 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
           <button
             type="button"
             onClick={() => setShowMobilePreview(true)}
-            className="xl:hidden inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="xl:hidden inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
           >
-            <Eye className="w-4 h-4 mr-1" />
+            <Eye className="w-4 h-4 mr-2" />
             プレビュー
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">請求書番号</label>
-            <input
-              type="text"
-              value={invoiceData.invoiceNumber}
-              onChange={e => setInvoiceData(prev => ({ ...prev, invoiceNumber: e.target.value }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="invoiceNumber">請求書番号</Label>
+              <Input
+                id="invoiceNumber"
+                type="text"
+                value={invoiceData.invoiceNumber}
+                onChange={e => setInvoiceData(prev => ({ ...prev, invoiceNumber: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="issueDate">発行日</Label>
+              <Input
+                id="issueDate"
+                type="date"
+                value={invoiceData.issueDate}
+                onChange={e => setInvoiceData(prev => ({ ...prev, issueDate: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="dueDate">支払期限</Label>
+              <Input
+                id="dueDate"
+                type="date"
+                value={invoiceData.dueDate}
+                onChange={e => setInvoiceData(prev => ({ ...prev, dueDate: e.target.value }))}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">発行日</label>
-            <input
-              type="date"
-              value={invoiceData.issueDate}
-              onChange={e => setInvoiceData(prev => ({ ...prev, issueDate: e.target.value }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-          </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="issuerInfo">発行者情報</Label>
+              <Textarea
+                id="issuerInfo"
+                value={invoiceData.issuerInfo}
+                onChange={e => setInvoiceData(prev => ({ ...prev, issuerInfo: e.target.value }))}
+                rows={4}
+                placeholder="会社名&#13;&#10;住所&#13;&#10;電話番号&#13;&#10;担当者名"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">支払期限</label>
-            <input
-              type="date"
-              value={invoiceData.dueDate}
-              onChange={e => setInvoiceData(prev => ({ ...prev, dueDate: e.target.value }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
+            <div className="space-y-2">
+              <Label htmlFor="customerInfo">請求先情報</Label>
+              <Textarea
+                id="customerInfo"
+                value={invoiceData.customerInfo}
+                onChange={e => setInvoiceData(prev => ({ ...prev, customerInfo: e.target.value }))}
+                rows={4}
+                placeholder="会社名&#13;&#10;住所&#13;&#10;部署名&#13;&#10;担当者名"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">発行者情報</label>
-            <textarea
-              value={invoiceData.issuerInfo}
-              onChange={e => setInvoiceData(prev => ({ ...prev, issuerInfo: e.target.value }))}
-              rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="会社名&#13;&#10;住所&#13;&#10;電話番号&#13;&#10;担当者名"
-            />
-          </div>
+        <Separator className="my-8" />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">請求先情報</label>
-            <textarea
-              value={invoiceData.customerInfo}
-              onChange={e => setInvoiceData(prev => ({ ...prev, customerInfo: e.target.value }))}
-              rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="会社名&#13;&#10;住所&#13;&#10;部署名&#13;&#10;担当者名"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium">明細</h2>
             <button
               type="button"
               onClick={addItem}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
-              <Plus className="w-4 h-4 mr-1" />
+              <Plus className="w-4 h-4 mr-2" />
               明細追加
             </button>
           </div>
 
           {invoiceData.items.map((item, index) => (
-            <div key={index} className="border rounded-lg p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div key={index} className="border rounded-lg p-6 space-y-6 bg-gray-50/50">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">品目</label>
-                  <input
+                  <Label htmlFor={`item-${index}-description`}>品目</Label>
+                  <Input
+                    id={`item-${index}-description`}
                     type="text"
                     value={item.description}
                     onChange={e => updateItem(index, 'description', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-2"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">数量</label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor={`item-${index}-quantity`}>数量</Label>
+                  <Input
+                    id={`item-${index}-quantity`}
                     type="number"
                     min="1"
                     value={item.quantity}
                     onChange={e => updateItem(index, 'quantity', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">単価</label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor={`item-${index}-unitPrice`}>単価</Label>
+                  <Input
+                    id={`item-${index}-unitPrice`}
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
                     value={item.unitPrice}
                     onChange={e => updateItem(index, 'unitPrice', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">税率</label>
+                <div className="space-y-2">
+                  <Label htmlFor={`item-${index}-taxRate`}>税率</Label>
                   <select
+                    id={`item-${index}-taxRate`}
                     value={item.taxRate}
                     onChange={e => updateItem(index, 'taxRate', parseInt(e.target.value) as 8 | 10)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-2 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     <option value={10}>10%</option>
                     <option value={8}>8%</option>
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">小計</label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor={`item-${index}-subtotal`}>小計</Label>
+                  <Input
+                    id={`item-${index}-subtotal`}
                     type="text"
                     value={`¥${calculateSubtotal(item).toLocaleString()}`}
                     readOnly
-                    className="mt-1 block w-full rounded-md bg-gray-50 border-gray-300 shadow-sm sm:text-sm"
+                    className="bg-muted"
                   />
                 </div>
 
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">備考</label>
-                  <input
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor={`item-${index}-notes`}>備考</Label>
+                  <Input
+                    id={`item-${index}-notes`}
                     type="text"
                     value={item.notes || ''}
                     onChange={e => updateItem(index, 'notes', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
               </div>
@@ -234,9 +244,9 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
                   <button
                     type="button"
                     onClick={() => removeItem(index)}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-destructive bg-destructive/10 hover:bg-destructive/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-destructive"
                   >
-                    <Trash2 className="w-4 h-4 mr-1" />
+                    <Trash2 className="w-4 h-4 mr-2" />
                     削除
                   </button>
                 </div>
@@ -245,49 +255,45 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
           ))}
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">支払い情報</label>
-            <textarea
+        <Separator className="my-8" />
+
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="paymentInfo">支払い情報</Label>
+            <Textarea
+              id="paymentInfo"
               value={invoiceData.paymentInfo}
               onChange={e => setInvoiceData(prev => ({ ...prev, paymentInfo: e.target.value }))}
               rows={3}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               placeholder="振込先口座情報など"
             />
           </div>
         </div>
 
-        <div className="border-t pt-4">
-          <dl className="space-y-2">
+        <Separator className="my-8" />
+
+        <div className="space-y-4">
+          <dl className="space-y-4">
             {Object.entries(totals.subtotalsByTaxRate).map(([rate, subtotal]) => (
               <div key={rate} className="flex justify-between text-sm">
-                <dt>小計（{rate}%対象）</dt>
-                <dd>¥{subtotal.toLocaleString()}</dd>
+                <dt className="text-muted-foreground">小計（{rate}%対象）</dt>
+                <dd className="font-medium">¥{subtotal.toLocaleString()}</dd>
               </div>
             ))}
             {Object.entries(totals.taxesByRate).map(([rate, tax]) => (
               <div key={rate} className="flex justify-between text-sm">
-                <dt>消費税（{rate}%）</dt>
-                <dd>¥{tax.toLocaleString()}</dd>
+                <dt className="text-muted-foreground">消費税（{rate}%）</dt>
+                <dd className="font-medium">¥{tax.toLocaleString()}</dd>
               </div>
             ))}
-            <div className="flex justify-between font-medium text-lg pt-2 border-t">
+            <Separator />
+            <div className="flex justify-between text-lg font-medium">
               <dt>合計金額（税込）</dt>
               <dd>¥{totals.total.toLocaleString()}</dd>
             </div>
           </dl>
         </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            PDFを生成
-          </button>
-        </div>
-      </form>
+      </div>
 
       {showMobilePreview && (
         <InvoicePreview
