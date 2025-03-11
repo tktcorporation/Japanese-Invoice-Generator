@@ -16,8 +16,8 @@ function App() {
             <InvoiceForm onSubmit={setInvoiceData} />
           </div>
           
-          <div className="hidden xl:block xl:w-[800px] sticky top-8 self-start">
-            <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="hidden xl:block xl:w-[800px] sticky top-8 self-start h-[calc(100vh-6rem)]">
+            <div className="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">プレビュー</h2>
                 <PDFDownloadLink
@@ -35,8 +35,8 @@ function App() {
                   )}
                 </PDFDownloadLink>
               </div>
-              <div className="border rounded-lg overflow-hidden">
-                <InvoicePDF.Preview data={currentData} />
+              <div className="flex-1 border rounded-lg overflow-hidden">
+                <InvoicePDF.Preview data={currentData} className="w-full h-full" />
               </div>
             </div>
           </div>

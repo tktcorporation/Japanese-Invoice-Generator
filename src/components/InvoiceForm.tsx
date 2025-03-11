@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { FileText, Plus, Trash2, Eye } from 'lucide-react';
+import { FileText, Plus, Trash2, Eye, X } from 'lucide-react';
 import { InvoiceData, InvoiceItem } from '../types';
 import { calculateSubtotal, calculateTotals } from '../utils/calculations';
-import { InvoicePreview } from './InvoicePreview';
+import { InvoicePDF } from './InvoicePDF';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
@@ -296,10 +296,22 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
       </div>
 
       {showMobilePreview && (
-        <InvoicePreview
-          data={invoiceData}
-          onClose={() => setShowMobilePreview(false)}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col">
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold">プレビュー</h2>
+              <button
+                onClick={() => setShowMobilePreview(false)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <InvoicePDF.Preview data={invoiceData} className="w-full h-full" />
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
