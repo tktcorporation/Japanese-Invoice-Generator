@@ -10,44 +10,52 @@ Font.register({
 });
 
 const styles = StyleSheet.create({
+  // Spacing styles
+  mt0: { marginTop: 0 },
+  mt1: { marginTop: 5 },
+  mt2: { marginTop: 10 },
+  mt3: { marginTop: 20 },
+  mt4: { marginTop: 30 },
+  mt5: { marginTop: 40 },
+  mt6: { marginTop: 50 },
+  mb0: { marginBottom: 0 },
+  mb1: { marginBottom: 5 },
+  mb2: { marginBottom: 10 },
+  mb3: { marginBottom: 20 },
+  my1: { marginVertical: 5 },
+  my2: { marginVertical: 10 },
+  my3: { marginVertical: 20 },
+  
+  // Base styles
   page: {
     fontFamily: 'NotoSansJP',
     padding: 40,
-    fontSize: 9,
+    fontSize: 12,
   },
   header: {
     marginBottom: 20,
   },
   title: {
     fontSize: 24,
-    marginBottom: 10,
     textAlign: 'center',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  section: {
-    marginBottom: 10,
   },
   infoContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
   },
   infoColumn: {
     flex: 1,
     paddingRight: 10,
   },
-  table: {
-    marginBottom: 20,
-  },
+  table: {},
   tableHeader: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#000',
     paddingBottom: 5,
-    marginBottom: 5,
   },
   tableRow: {
     flexDirection: 'row',
@@ -61,38 +69,38 @@ const styles = StyleSheet.create({
   col3: { width: '15%', textAlign: 'right' },
   col4: { width: '15%', textAlign: 'right' },
   col5: { width: '15%', textAlign: 'right' },
-  totals: {
-    marginTop: 20,
-  },
+  totals: {},
   bold: {
     fontWeight: 'bold',
   },
   small: {
-    fontSize: 8,
+    fontSize: 12,
   },
   notes: {
-    fontSize: 7,
+    fontSize: 10,
     color: '#666',
   },
   customerFirstLine: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     textDecoration: 'underline',
-    marginBottom: 5,
   },
   totalAmount: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 5,
-    marginBottom: 5,
+    textDecoration: 'underline',
   },
   totalAmountLabel: {
     fontSize: 12,
   },
   dueDate: {
-    fontSize: 10,
-    marginBottom: 20,
+    fontSize: 12,
   },
+  paymentInfo: {
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#000',
+  }
 });
 
 interface Props {
@@ -119,33 +127,37 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
 
   return (
     <View style={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.title}>請求書</Text>
-        <View style={styles.row}>
+      <View style={[styles.header, styles.mb3]}>
+        <Text style={[styles.title, styles.mb2]}>請求書</Text>
+        <View style={[styles.row, styles.mb1]}>
           <Text style={styles.small}>請求書番号: {data.invoiceNumber}</Text>
           <Text style={styles.small}>発行日: {data.issueDate}</Text>
         </View>
       </View>
 
-      <View style={styles.infoContainer}>
+      {/* 請求先 */}
+      <View style={[styles.infoContainer, styles.mb3]}>
         <View style={styles.infoColumn}>
-          <Text style={styles.bold}>請求先:</Text>
-          <Text style={styles.customerFirstLine}>{data.customerInfo.split('\n')[0]}</Text>
+          <Text style={[styles.customerFirstLine, styles.mb1]}>{data.customerInfo.split('\n')[0]}</Text>
           <Text style={styles.small}>{data.customerInfo.split('\n').slice(1).join('\n')}</Text>
         </View>
 
+        {/* 請求元 */}
         <View style={styles.infoColumn}>
-          <Text style={styles.bold}>請求元:</Text>
           <Text style={styles.small}>{data.issuerInfo}</Text>
         </View>
       </View>
 
-      <Text style={styles.totalAmountLabel}>下記のとおりご請求申し上げます。</Text>
-      <Text style={styles.totalAmount}>ご請求金額　¥{totals.total.toLocaleString()}－</Text>
-      <Text style={styles.dueDate}>お支払い期限　{data.dueDate}</Text>
+      {data.subject && (
+        <Text style={[styles.bold, styles.mt3]}>件名: {data.subject}</Text>
+      )}
 
-      <View style={styles.table}>
-        <View style={styles.tableHeader}>
+      <Text style={[styles.totalAmountLabel, styles.mt1]}>下記のとおりご請求申し上げます。</Text>
+      <Text style={[styles.totalAmount, styles.my2]}>ご請求金額　　¥ {totals.total.toLocaleString()} -</Text>
+      <Text style={[styles.dueDate, styles.mb3]}>お支払い期限: {data.dueDate}</Text>
+
+      <View style={[styles.table, styles.mb3]}>
+        <View style={[styles.tableHeader, styles.mb1]}>
           <Text style={styles.col1}>品目</Text>
           <Text style={styles.col2}>数量</Text>
           <Text style={styles.col3}>単価</Text>
@@ -169,31 +181,29 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
         ))}
       </View>
 
-      <View style={styles.totals}>
+      <View style={[styles.totals, styles.mt3]}>
         {Object.entries(totals.subtotalsByTaxRate).map(([rate, subtotal]) => (
-          <View key={rate} style={styles.row}>
-            <Text style={styles.small}>小計（{rate}%対象）:</Text>
+          <View key={rate} style={[styles.row, styles.mb1]}>
+            <Text style={styles.small}>小計:</Text>
             <Text style={styles.small}>¥{subtotal.toLocaleString()}</Text>
           </View>
         ))}
         {Object.entries(totals.taxesByRate).map(([rate, tax]) => (
-          <View key={rate} style={styles.row}>
+          <View key={rate} style={[styles.row, styles.mb1]}>
             <Text style={styles.small}>消費税（{rate}%）:</Text>
             <Text style={styles.small}>¥{tax.toLocaleString()}</Text>
           </View>
         ))}
         <View style={[styles.row, styles.bold]}>
-          <Text>合計金額（税込）:</Text>
+          <Text>合計:</Text>
           <Text>¥{totals.total.toLocaleString()}</Text>
         </View>
       </View>
 
-      {data.paymentInfo && (
-        <View style={{ marginTop: 20, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#000' }}>
-          <Text style={styles.bold}>お支払い情報:</Text>
-          <Text style={styles.small}>{data.paymentInfo}</Text>
-        </View>
-      )}
+      <View style={[styles.paymentInfo, styles.mt6]}>
+        <Text style={styles.bold}>お振込先:</Text>
+        <Text style={styles.small}>{data.paymentInfo}</Text>
+      </View>
     </View>
   );
 }; 

@@ -12,6 +12,7 @@ export interface InvoiceData {
   dueDate: string;
   issuerInfo: string;
   customerInfo: string;
+  subject: string;
   items: InvoiceItem[];
   paymentInfo: string;
 }

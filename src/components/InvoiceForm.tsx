@@ -23,8 +23,23 @@ const initialInvoiceData: InvoiceData = {
   dueDate: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
   issuerInfo: '',
   customerInfo: '',
+  subject: '',
   items: [{ ...initialItem }],
   paymentInfo: ''
+};
+
+// ローカルストレージのキー
+const STORAGE_KEY = 'invoice_form_data';
+
+// ローカルストレージから保存されたデータを取得
+const getSavedData = (): InvoiceData | null => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch (error) {
+    console.error('Error loading saved data:', error);
+    return null;
+  }
 };
 
 interface Props {
@@ -32,11 +47,16 @@ interface Props {
 }
 
 const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ onSubmit }) => {
-  const [invoiceData, setInvoiceData] = useState<InvoiceData>(initialInvoiceData);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>(() => {
+    // 初期化時にローカルストレージから保存されたデータを読み込む
+    return getSavedData() || initialInvoiceData;
+  });
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   useEffect(() => {
     onSubmit(invoiceData);
+    // データが更新されたらローカルストレージに保存
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(invoiceData));
   }, [invoiceData, onSubmit]);
 
   const addItem = () => {
@@ -123,6 +143,17 @@ const InvoiceForm: React.FC<Props> & { getInitialData: () => InvoiceData } = ({ 
                 type="date"
                 value={invoiceData.dueDate}
                 onChange={e => setInvoiceData(prev => ({ ...prev, dueDate: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subject">件名</Label>
+              <Input
+                id="subject"
+                type="text"
+                value={invoiceData.subject}
+                onChange={e => setInvoiceData(prev => ({ ...prev, subject: e.target.value }))}
+                placeholder="件名を入力してください"
               />
             </div>
           </div>
