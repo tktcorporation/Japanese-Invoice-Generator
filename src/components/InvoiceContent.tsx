@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
     minHeight: 25,
   },
+  col70: { width: '70%' },
   col1: { width: '40%' },
   col2: { width: '15%', textAlign: 'right' },
   col3: { width: '15%', textAlign: 'right' },
@@ -88,7 +89,10 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 16,
     fontWeight: 'bold',
-    textDecoration: 'underline',
+    borderBottomWidth: 1,
+    borderBottomColor: '#000',
+    paddingBottom: 2,
+    // alignSelf: 'flex-start',
   },
   totalAmountLabel: {
     fontSize: 12,
@@ -153,7 +157,10 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
       )}
 
       <Text style={[styles.totalAmountLabel, styles.mt1]}>下記のとおりご請求申し上げます。</Text>
-      <Text style={[styles.totalAmount, styles.my2]}>ご請求金額　　¥ {totals.total.toLocaleString()} -</Text>
+      <View style={[styles.totalAmount, styles.my2, styles.row, styles.col70 ]}>
+        <Text>ご請求金額</Text>
+        <Text>¥ {totals.total.toLocaleString()} -</Text>
+      </View>
       <Text style={[styles.dueDate, styles.mb3]}>お支払い期限: {data.dueDate}</Text>
 
       <View style={[styles.table, styles.mb3]}>
