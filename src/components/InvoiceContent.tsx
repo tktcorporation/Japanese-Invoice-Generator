@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
   // Base styles
   page: {
     fontFamily: 'NotoSansJP',
-    padding: 40,
-    fontSize: 12,
+    padding: 50,
+    fontSize: 10,
   },
   header: {
     marginBottom: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     textAlign: 'center',
   },
   row: {
@@ -65,29 +65,29 @@ const styles = StyleSheet.create({
     minHeight: 25,
   },
   col70: { width: '70%' },
-  col1: { width: '40%' },
+  col1: { width: '35%' },
   col2: { width: '15%', textAlign: 'right' },
-  col3: { width: '15%', textAlign: 'right' },
+  col3: { width: '17%', textAlign: 'right' },
   col4: { width: '15%', textAlign: 'right' },
-  col5: { width: '15%', textAlign: 'right' },
+  col5: { width: '18%', textAlign: 'right' },
   totals: {},
   bold: {
     fontWeight: 'bold',
   },
   small: {
-    fontSize: 12,
+    fontSize: 10,
   },
   notes: {
-    fontSize: 10,
+    fontSize: 8,
     color: '#666',
   },
   customerFirstLine: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     textDecoration: 'underline',
   },
   totalAmount: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     borderBottomWidth: 1,
     borderBottomColor: '#000',
@@ -95,10 +95,10 @@ const styles = StyleSheet.create({
     // alignSelf: 'flex-start',
   },
   totalAmountLabel: {
-    fontSize: 12,
+    fontSize: 10,
   },
   dueDate: {
-    fontSize: 12,
+    fontSize: 10,
   },
   paymentInfo: {
     paddingTop: 10,
