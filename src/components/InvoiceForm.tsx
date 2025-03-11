@@ -186,8 +186,8 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }
 
             {fields.map((field: InvoiceItem & { id: string }, index: number) => (
               <div key={field.id} className="border rounded-lg p-6 space-y-6 bg-gray-50/50">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="col-span-2">
+                <div className="space-y-6">
+                  <div>
                     <Label htmlFor={`item-${index}-description`}>品目</Label>
                     <Input
                       id={`item-${index}-description`}
@@ -197,43 +197,38 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor={`item-${index}-quantity`}>数量</Label>
-                    <Input
-                      id={`item-${index}-quantity`}
-                      type="number"
-                      min="1"
-                      {...register(`items.${index}.quantity`)}
-                    />
-                  </div>
+                  <div className="grid grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor={`item-${index}-quantity`}>数量</Label>
+                      <Input
+                        id={`item-${index}-quantity`}
+                        type="number"
+                        min="1"
+                        {...register(`items.${index}.quantity`)}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor={`item-${index}-unitPrice`}>単価</Label>
-                    <Input
-                      id={`item-${index}-unitPrice`}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      {...register(`items.${index}.unitPrice`)}
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`item-${index}-unitPrice`}>単価</Label>
+                      <Input
+                        id={`item-${index}-unitPrice`}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        {...register(`items.${index}.unitPrice`)}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor={`item-${index}-taxRate`}>税率</Label>
-                    <select
-                      id={`item-${index}-taxRate`}
-                      {...register(`items.${index}.taxRate`)}
-                      className="mt-2 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                      <option value={10}>10%</option>
-                      <option value={8}>8%</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor={`item-${index}-subtotal`}>小計</Label>
-                    <div className="mt-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-right text-gray-700">
-                      ¥{calculateSubtotal(field).toLocaleString()}
+                    <div className="space-y-2">
+                      <Label htmlFor={`item-${index}-taxRate`}>税率</Label>
+                      <select
+                        id={`item-${index}-taxRate`}
+                        {...register(`items.${index}.taxRate`)}
+                        className="mt-2 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value={10}>10%</option>
+                        <option value={8}>8%</option>
+                      </select>
                     </div>
                   </div>
                 </div>
