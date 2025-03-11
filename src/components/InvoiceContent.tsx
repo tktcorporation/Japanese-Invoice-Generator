@@ -74,6 +74,25 @@ const styles = StyleSheet.create({
     fontSize: 7,
     color: '#666',
   },
+  customerFirstLine: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textDecoration: 'underline',
+    marginBottom: 5,
+  },
+  totalAmount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  totalAmountLabel: {
+    fontSize: 12,
+  },
+  dueDate: {
+    fontSize: 10,
+    marginBottom: 20,
+  },
 });
 
 interface Props {
@@ -106,13 +125,12 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
           <Text style={styles.small}>請求書番号: {data.invoiceNumber}</Text>
           <Text style={styles.small}>発行日: {data.issueDate}</Text>
         </View>
-        <Text style={styles.small}>支払期限: {data.dueDate}</Text>
       </View>
 
       <View style={styles.infoContainer}>
         <View style={styles.infoColumn}>
           <Text style={styles.bold}>請求先:</Text>
-          <Text style={[styles.small, styles.bold]}>{data.customerInfo.split('\n')[0]}</Text>
+          <Text style={styles.customerFirstLine}>{data.customerInfo.split('\n')[0]}</Text>
           <Text style={styles.small}>{data.customerInfo.split('\n').slice(1).join('\n')}</Text>
         </View>
 
@@ -121,6 +139,10 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
           <Text style={styles.small}>{data.issuerInfo}</Text>
         </View>
       </View>
+
+      <Text style={styles.totalAmountLabel}>下記のとおりご請求申し上げます。</Text>
+      <Text style={styles.totalAmount}>ご請求金額　¥{totals.total.toLocaleString()}－</Text>
+      <Text style={styles.dueDate}>お支払い期限　{data.dueDate}</Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
