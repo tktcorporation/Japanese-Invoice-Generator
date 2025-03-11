@@ -93,17 +93,32 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
+          <div className="space-y-8">
+            {/* 取引先情報セクション */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <Label htmlFor="invoiceNumber">請求書番号</Label>
-                <Input
-                  id="invoiceNumber"
-                  type="text"
-                  {...register('invoiceNumber')}
+                <Label htmlFor="customerInfo">請求先情報</Label>
+                <Textarea
+                  id="customerInfo"
+                  {...register('customerInfo')}
+                  rows={4}
+                  placeholder="会社名&#13;&#10;住所&#13;&#10;部署名&#13;&#10;担当者名"
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="issuerInfo">発行者情報</Label>
+                <Textarea
+                  id="issuerInfo"
+                  {...register('issuerInfo')}
+                  rows={4}
+                  placeholder="会社名&#13;&#10;住所&#13;&#10;電話番号&#13;&#10;担当者名"
+                />
+              </div>
+            </div>
+
+            {/* 日付セクション */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
                 <Label htmlFor="issueDate">発行日</Label>
                 <Input
@@ -121,45 +136,34 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }
                   {...register('dueDate')}
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="subject" className="flex items-center gap-1">
-                  件名
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="subject"
-                  type="text"
-                  {...register('subject', { required: '件名は必須項目です' })}
-                  placeholder="件名を入力してください"
-                  className={errors.subject ? 'border-red-500' : ''}
-                />
-                {errors.subject && (
-                  <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
-                )}
-              </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="issuerInfo">発行者情報</Label>
-                <Textarea
-                  id="issuerInfo"
-                  {...register('issuerInfo')}
-                  rows={4}
-                  placeholder="会社名&#13;&#10;住所&#13;&#10;電話番号&#13;&#10;担当者名"
-                />
-              </div>
+            {/* 請求書番号セクション */}
+            <div className="space-y-2">
+              <Label htmlFor="invoiceNumber">請求書番号</Label>
+              <Input
+                id="invoiceNumber"
+                type="text"
+                {...register('invoiceNumber')}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="customerInfo">請求先情報</Label>
-                <Textarea
-                  id="customerInfo"
-                  {...register('customerInfo')}
-                  rows={4}
-                  placeholder="会社名&#13;&#10;住所&#13;&#10;部署名&#13;&#10;担当者名"
-                />
-              </div>
+            {/* 件名セクション */}
+            <div className="space-y-2">
+              <Label htmlFor="subject" className="flex items-center gap-1">
+                件名
+                <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="subject"
+                type="text"
+                {...register('subject', { required: '件名は必須項目です' })}
+                placeholder="件名を入力してください"
+                className={errors.subject ? 'border-red-500' : ''}
+              />
+              {errors.subject && (
+                <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+              )}
             </div>
           </div>
 
