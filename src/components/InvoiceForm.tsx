@@ -54,7 +54,7 @@ interface InvoiceFormComponent extends React.FC<InvoiceFormProps> {
 
 const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }) => {
   const { register, control, watch, formState: { errors } } = useForm<InvoiceData>({
-    defaultValues: defaultValues || initialInvoiceData
+    defaultValues: defaultValues || getSavedData() || initialInvoiceData
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -67,9 +67,11 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }
   // フォームの値をリアルタイムで監視
   const formData = watch();
   
-  // 値が変更されたらコールバックを呼び出す
+  // 値が変更されたらコールバックを呼び出し、ローカルストレージに保存
   useEffect(() => {
     onSubmit(formData);
+    // データが更新されたらローカルストレージに保存
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
   }, [formData, onSubmit]);
 
   const totals = calculateTotals(fields);
