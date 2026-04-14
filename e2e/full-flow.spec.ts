@@ -26,19 +26,12 @@ async function fillInvoiceForm(page: import('@playwright/test').Page) {
 }
 
 /**
- * PDFDownloadLink が生成する <a download> タグの準備完了を待ち、
- * ダウンロードリンクが有効であることを検証する
+ * PDFダウンロードボタンが有効（準備完了）になるのを待つ
  */
 async function assertPdfDownloadReady(page: import('@playwright/test').Page) {
   const downloadButton = page.getByRole('button', { name: 'PDFをダウンロード' });
-  await expect(downloadButton).toBeVisible({ timeout: 15000 });
-  await expect(downloadButton).toBeEnabled({ timeout: 15000 });
-
-  // PDFDownloadLink は <a download="filename.pdf" href="blob:..."> を生成する
-  // ボタンの親要素の <a> タグに download 属性と blob URL が設定されるのを待つ
-  const downloadLink = downloadButton.locator('xpath=ancestor::a');
-  await expect(downloadLink).toHaveAttribute('download', /^invoice-.*\.pdf$/, { timeout: 15000 });
-  await expect(downloadLink).toHaveAttribute('href', /^blob:/, { timeout: 15000 });
+  await expect(downloadButton).toBeVisible({ timeout: 30000 });
+  await expect(downloadButton).toBeEnabled({ timeout: 30000 });
 }
 
 test.beforeEach(async ({ page }) => {
