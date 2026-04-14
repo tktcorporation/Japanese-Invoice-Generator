@@ -3,10 +3,10 @@ import { Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 import { InvoiceData } from '../types';
 import { calculateSubtotal, calculateTotals } from '../utils/calculations';
 
-// Register Japanese font
+// Register Japanese font (public/ から静的配信、CORS 問題を回避)
 Font.register({
   family: 'NotoSansJP',
-  src: 'https://fonts.gstatic.com/ea/notosansjp/v5/NotoSansJP-Regular.otf'
+  src: '/fonts/NotoSansJP-Regular.woff',
 });
 
 const styles = StyleSheet.create({
@@ -152,9 +152,9 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
         </View>
       </View>
 
-      {data.subject && (
+      {data.subject ? (
         <Text style={[styles.bold, styles.mt3]}>件名: {data.subject}</Text>
-      )}
+      ) : null}
 
       <Text style={[styles.totalAmountLabel, styles.mt1]}>下記のとおりご請求申し上げます。</Text>
       <View style={[styles.totalAmount, styles.my2, styles.row, styles.col70 ]}>
@@ -176,9 +176,9 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
           <View key={index} style={styles.tableRow}>
             <View style={styles.col1}>
               <Text>{item.description}</Text>
-              {item.notes && (
+              {item.notes ? (
                 <Text style={styles.notes}>{item.notes}</Text>
-              )}
+              ) : null}
             </View>
             <Text style={styles.col2}>{item.quantity || ''}</Text>
             <Text style={styles.col3}>{item.unitPrice ? `¥${item.unitPrice.toLocaleString()}` : ''}</Text>
