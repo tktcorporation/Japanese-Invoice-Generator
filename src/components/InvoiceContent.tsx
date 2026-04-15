@@ -180,10 +180,10 @@ export const InvoiceContent: React.FC<Props> = ({ data }) => {
                 <Text style={styles.notes}>{item.notes}</Text>
               ) : null}
             </View>
-            <Text style={styles.col2}>{item.quantity || ''}</Text>
-            <Text style={styles.col3}>{item.unitPrice ? `¥${item.unitPrice.toLocaleString()}` : ''}</Text>
-            <Text style={styles.col4}>{item.quantity ? `${item.taxRate}%` : ''}</Text>
-            <Text style={styles.col5}>{item.quantity ? `¥${calculateSubtotal(item).toLocaleString()}` : ''}</Text>
+            <Text style={styles.col2}>{Number(item.quantity) || ''}</Text>
+            <Text style={styles.col3}>{Number(item.unitPrice) ? `¥${Number(item.unitPrice).toLocaleString()}` : ''}</Text>
+            <Text style={styles.col4}>{Number(item.quantity) ? `${Number(item.taxRate)}%` : ''}</Text>
+            <Text style={styles.col5}>{Number(item.quantity) ? `¥${calculateSubtotal(item).toLocaleString()}` : ''}</Text>
           </View>
         ))}
       </View>

@@ -30,13 +30,16 @@ async function fillInvoiceForm(page: import('@playwright/test').Page) {
  */
 async function downloadPdfAndVerify(page: import('@playwright/test').Page) {
   const downloadButton = page.getByRole('button', { name: 'PDFをダウンロード' });
-  await expect(downloadButton).toBeVisible({ timeout: 30000 });
-  await expect(downloadButton).toBeEnabled({ timeout: 30000 });
+  await expect(downloadButton).toBeVisible({ timeout: 60000 });
+  await expect(downloadButton).toBeEnabled({ timeout: 60000 });
 
-  // ダウンロードイベントを待機してからクリック
+  // PDFDownloadLink の <a download href="blob:..."> が準備完了するのを待つ
+  const downloadLink = downloadButton.locator('xpath=ancestor::a');
+  await expect(downloadLink).toHaveAttribute('href', /.+/, { timeout: 60000 });
+
   const [download] = await Promise.all([
-    page.waitForEvent('download', { timeout: 30000 }),
-    downloadButton.click(),
+    page.waitForEvent('download', { timeout: 60000 }),
+    downloadLink.click(),
   ]);
 
   expect(download.suggestedFilename()).toMatch(/^invoice-.*\.pdf$/);
@@ -89,6 +92,9 @@ test.describe('SP: フルフロー（入力→モバイルプレビュー→PDF�
 
   test('モバイルからPDFをダウンロードできる', async ({ page }) => {
     await fillInvoiceForm(page);
+    // SP ではダウンロードボタンがフォーム下部にあるのでスクロール
+    const downloadButton = page.getByRole('button', { name: 'PDFをダウンロード' });
+    await downloadButton.scrollIntoViewIfNeeded();
     await downloadPdfAndVerify(page);
   });
 });

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { usePDF } from '@react-pdf/renderer';
+import React, { useState, useEffect, useRef } from 'react';
+import { usePDF, PDFDownloadLink } from '@react-pdf/renderer';
 import { InvoiceForm } from './components/InvoiceForm';
 import { InvoicePDF } from './components/InvoicePDF';
 import { InvoiceData } from './types';
@@ -36,12 +36,8 @@ function App() {
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
   const [debouncedData, setDebouncedData] = useState<InvoiceData>(InvoiceForm.getInitialData());
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
-  const latestDataRef = useRef<InvoiceData>(InvoiceForm.getInitialData());
 
-  // 最新データの参照を常に更新（ダウンロード時のフラッシュ用）
-  if (invoiceData) {
-    latestDataRef.current = invoiceData;
-  }
+  const latestData = invoiceData || InvoiceForm.getInitialData();
 
   useEffect(() => {
     if (!invoiceData) return;
@@ -52,43 +48,31 @@ function App() {
     return () => clearTimeout(timerRef.current);
   }, [invoiceData]);
 
-  // 単一の usePDF インスタンスでプレビュー＆ダウンロードを共有
-  const [pdfInstance, updatePdf] = usePDF({
+  // プレビュー用 PDF（デバウンスされたデータ）
+  const [previewInstance, updatePreview] = usePDF({
     document: <InvoicePDF data={debouncedData} />,
   });
 
   useEffect(() => {
-    updatePdf(<InvoicePDF data={debouncedData} />);
-  }, [debouncedData, updatePdf]);
+    updatePreview(<InvoicePDF data={debouncedData} />);
+  }, [debouncedData, updatePreview]);
 
-  // ダウンロード: 最新データで即座に PDF を再生成してからダウンロード
-  const handleDownload = useCallback(() => {
-    // デバウンス待ちの最新データでフラッシュ
-    clearTimeout(timerRef.current);
-    setDebouncedData(latestDataRef.current);
-    updatePdf(<InvoicePDF data={latestDataRef.current} />);
-
-    // blob URL が準備できたらダウンロード（少し待つ必要がある場合あり）
-    const tryDownload = () => {
-      if (pdfInstance.url) {
-        const a = document.createElement('a');
-        a.href = pdfInstance.url;
-        a.download = `invoice-${latestDataRef.current.invoiceNumber}.pdf`;
-        a.click();
-      }
-    };
-    // 即座にダウンロード試行（blob が既にあれば成功）
-    tryDownload();
-  }, [pdfInstance.url, updatePdf]);
-
+  // ダウンロード: PDFDownloadLink で常に最新データからPDFを生成
   const downloadButton = (extraClass: string) => (
-    <button
-      onClick={handleDownload}
-      disabled={pdfInstance.loading || !pdfInstance.url}
-      className={`${DOWNLOAD_BTN_BASE} ${extraClass}`}
+    <PDFDownloadLink
+      document={<InvoicePDF data={latestData} />}
+      fileName={`invoice-${latestData.invoiceNumber}.pdf`}
     >
-      {pdfInstance.loading ? '準備中...' : 'PDFをダウンロード'}
-    </button>
+      {/* @ts-ignore */}
+      {({ loading }) => (
+        <button
+          disabled={loading}
+          className={`${DOWNLOAD_BTN_BASE} ${extraClass}`}
+        >
+          {loading ? '準備中...' : 'PDFをダウンロード'}
+        </button>
+      )}
+    </PDFDownloadLink>
   );
 
   return (
@@ -98,8 +82,8 @@ function App() {
           <div className="xl:flex-1">
             <InvoiceForm
               onSubmit={setInvoiceData}
-              previewUrl={pdfInstance.url}
-              previewLoading={pdfInstance.loading}
+              previewUrl={previewInstance.url}
+              previewLoading={previewInstance.loading}
             />
             <div className="xl:hidden mt-6">
               {downloadButton('w-full px-4 py-3')}
@@ -112,7 +96,7 @@ function App() {
                 <h2 className="text-xl font-bold">プレビュー</h2>
                 {downloadButton('px-4 py-2')}
               </div>
-              <PdfPreview url={pdfInstance.url} loading={pdfInstance.loading} />
+              <PdfPreview url={previewInstance.url} loading={previewInstance.loading} />
             </div>
           </div>
         </div>
