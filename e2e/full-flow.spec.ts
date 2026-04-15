@@ -34,13 +34,9 @@ async function downloadPdfAndVerify(page: import('@playwright/test').Page) {
   await expect(downloadButton).toBeVisible({ timeout: 60000 });
   await expect(downloadButton).toBeEnabled({ timeout: 60000 });
 
-  // PDFDownloadLink の <a download href="blob:..."> が準備完了するのを待つ
-  const downloadLink = downloadButton.locator('xpath=ancestor::a');
-  await expect(downloadLink).toHaveAttribute('href', /.+/, { timeout: 60000 });
-
   const [download] = await Promise.all([
     page.waitForEvent('download', { timeout: 60000 }),
-    downloadLink.click(),
+    downloadButton.click(),
   ]);
 
   expect(download.suggestedFilename()).toMatch(/^invoice-.*\.pdf$/);

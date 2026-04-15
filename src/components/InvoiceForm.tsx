@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { FileText, Plus, Trash2, Eye, X } from 'lucide-react';
 import { InvoiceData, InvoiceItem } from '../types';
 import { calculateSubtotal, calculateTotals } from '../utils/calculations';
-import { InvoicePDF } from './InvoicePDF';
+import { InvoiceHTMLPreview } from './InvoiceHTMLPreview';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
@@ -278,7 +278,7 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }
               </button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <InvoicePDF.Preview data={formData} className="w-full h-full" />
+              <InvoiceHTMLPreview data={formData} />
             </div>
           </div>
         </div>
