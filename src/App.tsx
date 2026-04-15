@@ -14,6 +14,12 @@ function App() {
 
   const handleDownload = useCallback(async () => {
     setDownloading(true);
+
+    // iOS Safari ではユーザージェスチャーが async 後に失効し a.click() が効かないため、
+    // ジェスチャーが有効な間に先にウィンドウを開いておく
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const pdfWindow = isIOS ? window.open('about:blank', '_blank') : null;
+
     try {
       // @react-pdf/renderer をダウンロード時のみ遅延ロード
       const [{ pdf }, { InvoicePDF }] = await Promise.all([
@@ -22,13 +28,25 @@ function App() {
       ]);
       const blob = await pdf(<InvoicePDF data={latestData} />).toBlob();
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `invoice-${latestData.invoiceNumber}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+
+      if (pdfWindow) {
+        // iOS: 事前に開いたウィンドウにPDFを表示（共有ボタンから保存可能）
+        pdfWindow.location.href = url;
+      } else {
+        // PC / Android: download 属性付きリンクでダウンロード
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `invoice-${latestData.invoiceNumber}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      // ダウンロード / 表示開始までの猶予を持たせてからURLを解放
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (e) {
+      pdfWindow?.close();
+      throw e;
     } finally {
       setDownloading(false);
     }
