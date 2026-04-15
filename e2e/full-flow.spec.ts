@@ -30,6 +30,7 @@ async function fillInvoiceForm(page: import('@playwright/test').Page) {
  */
 async function downloadPdfAndVerify(page: import('@playwright/test').Page) {
   const downloadButton = page.getByRole('button', { name: 'PDFをダウンロード' });
+  await downloadButton.scrollIntoViewIfNeeded();
   await expect(downloadButton).toBeVisible({ timeout: 60000 });
   await expect(downloadButton).toBeEnabled({ timeout: 60000 });
 
@@ -92,9 +93,6 @@ test.describe('SP: フルフロー（入力→モバイルプレビュー→PDF�
 
   test('モバイルからPDFをダウンロードできる', async ({ page }) => {
     await fillInvoiceForm(page);
-    // SP ではダウンロードボタンがフォーム下部にあるのでスクロール
-    const downloadButton = page.getByRole('button', { name: 'PDFをダウンロード' });
-    await downloadButton.scrollIntoViewIfNeeded();
     await downloadPdfAndVerify(page);
   });
 });

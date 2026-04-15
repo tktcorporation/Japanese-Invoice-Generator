@@ -57,23 +57,9 @@ function App() {
     updatePreview(<InvoicePDF data={debouncedData} />);
   }, [debouncedData, updatePreview]);
 
-  // ダウンロード: PDFDownloadLink で常に最新データからPDFを生成
-  const downloadButton = (extraClass: string) => (
-    <PDFDownloadLink
-      document={<InvoicePDF data={latestData} />}
-      fileName={`invoice-${latestData.invoiceNumber}.pdf`}
-    >
-      {/* @ts-ignore */}
-      {({ loading }) => (
-        <button
-          disabled={loading}
-          className={`${DOWNLOAD_BTN_BASE} ${extraClass}`}
-        >
-          {loading ? '準備中...' : 'PDFをダウンロード'}
-        </button>
-      )}
-    </PDFDownloadLink>
-  );
+  // ダウンロード: 単一の PDFDownloadLink（常に最新データ）
+  const pdfDocument = <InvoicePDF data={latestData} />;
+  const pdfFileName = `invoice-${latestData.invoiceNumber}.pdf`;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -85,8 +71,19 @@ function App() {
               previewUrl={previewInstance.url}
               previewLoading={previewInstance.loading}
             />
-            <div className="xl:hidden mt-6">
-              {downloadButton('w-full px-4 py-3')}
+            {/* ダウンロードボタン（単一の PDFDownloadLink を1箇所のみマウント） */}
+            <div className="mt-6">
+              <PDFDownloadLink document={pdfDocument} fileName={pdfFileName}>
+                {/* @ts-ignore */}
+                {({ loading }) => (
+                  <button
+                    disabled={loading}
+                    className={`${DOWNLOAD_BTN_BASE} w-full px-4 py-3`}
+                  >
+                    {loading ? '準備中...' : 'PDFをダウンロード'}
+                  </button>
+                )}
+              </PDFDownloadLink>
             </div>
           </div>
 
@@ -94,7 +91,6 @@ function App() {
             <div className="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">プレビュー</h2>
-                {downloadButton('px-4 py-2')}
               </div>
               <PdfPreview url={previewInstance.url} loading={previewInstance.loading} />
             </div>
