@@ -6,7 +6,7 @@ import { calculateSubtotal, calculateTotals } from '../utils/calculations';
 // Register Japanese font (public/ から静的配信、CORS 問題を回避)
 Font.register({
   family: 'NotoSansJP',
-  src: '/fonts/NotoSansJP-Regular.woff2',
+  src: '/fonts/NotoSansJP-Regular.woff',
 });
 
 const styles = StyleSheet.create({
