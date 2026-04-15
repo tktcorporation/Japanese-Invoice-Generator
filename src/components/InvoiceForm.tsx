@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { FileText, Plus, Trash2, Eye, X } from 'lucide-react';
 import { InvoiceData, InvoiceItem } from '../types';
 import { calculateSubtotal, calculateTotals } from '../utils/calculations';
+import { InvoicePDF } from './InvoicePDF';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
@@ -45,15 +46,13 @@ const getSavedData = (): InvoiceData | null => {
 interface InvoiceFormProps {
   onSubmit: (data: InvoiceData) => void;
   defaultValues?: InvoiceData;
-  previewUrl?: string | null;
-  previewLoading?: boolean;
 }
 
 interface InvoiceFormComponent extends React.FC<InvoiceFormProps> {
   getInitialData: () => InvoiceData;
 }
 
-const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues, previewUrl, previewLoading }) => {
+const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues }) => {
   const { register, control, watch, formState: { errors } } = useForm<InvoiceData>({
     defaultValues: defaultValues || getSavedData() || initialInvoiceData
   });
@@ -278,23 +277,8 @@ const InvoiceFormBase: React.FC<InvoiceFormProps> = ({ onSubmit, defaultValues, 
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-hidden relative">
-              {previewLoading && (
-                <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
-                  <p className="text-gray-500 text-sm">プレビュー更新中...</p>
-                </div>
-              )}
-              {previewUrl ? (
-                <iframe
-                  src={previewUrl}
-                  title="請求書プレビュー"
-                  style={{ width: '100%', height: '100%', border: 'none' }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-400 text-sm">プレビューを生成中...</p>
-                </div>
-              )}
+            <div className="flex-1 overflow-hidden">
+              <InvoicePDF.Preview data={formData} className="w-full h-full" />
             </div>
           </div>
         </div>

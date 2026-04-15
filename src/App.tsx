@@ -66,11 +66,7 @@ function App() {
       <div className="max-w-[2000px] mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col xl:flex-row xl:space-x-8">
           <div className="xl:flex-1">
-            <InvoiceForm
-              onSubmit={setInvoiceData}
-              previewUrl={previewInstance.url}
-              previewLoading={previewInstance.loading}
-            />
+            <InvoiceForm onSubmit={setInvoiceData} />
             {/* ダウンロードボタン（単一の PDFDownloadLink を1箇所のみマウント） */}
             <div className="mt-6">
               <PDFDownloadLink document={pdfDocument} fileName={pdfFileName}>
