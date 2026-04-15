@@ -1,7 +1,7 @@
 import { InvoiceItem } from '../types';
 
 export const calculateSubtotal = (item: InvoiceItem): number => {
-  return item.quantity * item.unitPrice;
+  return Number(item.quantity) * Number(item.unitPrice);
 };
 
 export const calculateTax = (amount: number, taxRate: number): number => {
@@ -16,7 +16,8 @@ export const calculateTotals = (items: InvoiceItem[]) => {
 
   items.forEach(item => {
     const subtotal = calculateSubtotal(item);
-    subtotalsByTaxRate[item.taxRate] = (subtotalsByTaxRate[item.taxRate] || 0) + subtotal;
+    const taxRate = Number(item.taxRate);
+    subtotalsByTaxRate[taxRate] = (subtotalsByTaxRate[taxRate] || 0) + subtotal;
     totalBeforeTax += subtotal;
   });
 
